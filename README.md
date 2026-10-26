@@ -32,3 +32,11 @@ Store the generated token in the macOS Keychain under the service name `claude-c
 ```
 security add-generic-password -a "$USER" -s claude-code-oauth -w
 ```
+
+# Updating Claude Code
+
+Claude Code is installed into the image at build time and the autoupdater is disabled. A plain `container build` reuses the cached install layer, so rebuild without the cache to pick up the latest version:
+
+```
+container build --no-cache -t claude-code-container
+```
