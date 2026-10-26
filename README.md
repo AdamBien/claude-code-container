@@ -33,6 +33,16 @@ Store the generated token in the macOS Keychain under the service name `claude-c
 security add-generic-password -a "$USER" -s claude-code-oauth -w
 ```
 
+# Running
+
+Put the `c3` script on your `PATH`, then start Claude Code in the container from any project directory. The current directory is mounted at the same path, Claude state comes from the named volume, and `~/.claude/skills` is mounted read-only:
+
+```
+c3
+```
+
+Arguments are passed through to `claude`. The script reads the OAuth token from the Keychain and exits if the lookup fails. It requires `~/.claude/skills` to exist on the host.
+
 # Updating Claude Code
 
 Claude Code is installed into the image at build time and the autoupdater is disabled. A plain `container build` reuses the cached install layer, so rebuild without the cache to pick up the latest version:
