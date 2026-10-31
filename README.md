@@ -54,9 +54,23 @@ cd ../myproject-feature && c3
 
 Each container reserves 8 CPUs and 32 GB of memory. Lower the `-c` and `-m` values in `c3` if the runtime refuses to start additional instances.
 
-# Migrating from the Named Volume
+# Alternative: Named Volume
 
-Earlier versions stored state in the `claude-code-container-state` volume. Copy it into the host directory once, then remove the volume:
+Instead of the host directory, Claude state can live in a named volume managed by `container`. A volume is a disk image attached to the container's VM, so the state is not visible on the host filesystem. The trade-off is that a volume can be attached to only one container at a time. A second instance fails with `The storage device attachment is invalid`, so this approach does not support parallel instances.
+
+Create the volume:
+
+```
+container volume create claude-code-container-state
+```
+
+Then replace the state mount in `c3`:
+
+```
+-v claude-code-container-state:/root/.claude \
+```
+
+To move existing volume state into the host directory, copy it once and remove the volume:
 
 ```
 container run --rm -v claude-code-container-state:/src -v "$HOME/.c3:/dst" \
