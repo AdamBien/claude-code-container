@@ -35,7 +35,15 @@ security add-generic-password -a "$USER" -s claude-code-oauth -w
 
 # Running
 
-Put the `c3` script on your `PATH`, then start Claude Code in the container from any project directory. The current directory is mounted at the same path, Claude state comes from `~/.c3`, and `~/.claude/skills` is mounted read-only:
+Put the `c3` script on your `PATH` with a symlink from inside this repository. A symlink keeps the command in sync when the script changes after a `git pull`:
+
+```
+ln -s "$PWD/c3" /usr/local/bin/c3
+```
+
+Use `sudo` if `/usr/local/bin` is not writable, or pick another directory on your `PATH` such as `~/bin`.
+
+Then start Claude Code in the container from any project directory. The current directory is mounted at the same path, Claude state comes from `~/.c3`, and `~/.claude/skills` is mounted read-only:
 
 ```
 c3
