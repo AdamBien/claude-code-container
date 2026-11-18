@@ -33,6 +33,24 @@ Store the generated token in the macOS Keychain under the service name `claude-c
 security add-generic-password -a "$USER" -s claude-code-oauth -w
 ```
 
+# Amazon Bedrock Setup
+
+The `bc3` script runs Claude Code against Anthropic models hosted on [Amazon Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html) instead of the Anthropic API. It uses its own state directory, `~/.bc3`, so Bedrock and Anthropic sessions do not share history or settings. Create the directory once:
+
+```
+mkdir -p ~/.bc3
+```
+
+Enable access to the Claude models in the Bedrock console for the region set in `bc3` (`eu-central-1`). Model access is granted per model and region, and the model ID in `bc3` (`eu.anthropic.claude-opus-5-5`) only resolves where it is enabled.
+
+Create a Bedrock API key (bearer token) for that account by following the [Bedrock API keys guide](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html). Store it in the macOS Keychain under the service name `aws-bearer-token-bedrock` (you'll be prompted to paste it):
+
+```
+security add-generic-password -a "$USER" -s aws-bearer-token-bedrock -w
+```
+
+For how Claude Code is configured against Bedrock, including environment variables, model selection, and IAM permissions, see the [Claude Code on Amazon Bedrock documentation](https://docs.claude.com/en/docs/claude-code/amazon-bedrock).
+
 # Running
 
 Put the `c3` script on your `PATH` with a symlink from inside this repository. A symlink keeps the command in sync when the script changes after a `git pull`:
@@ -50,6 +68,13 @@ c3
 ```
 
 Arguments are passed through to `claude`. The script reads the OAuth token from the Keychain and exits if the lookup fails. It requires `~/.c3` and `~/.claude/skills` to exist on the host.
+
+For Bedrock, link the `bc3` script the same way and run it. It works like `c3`, but reads the bearer token from the `aws-bearer-token-bedrock` Keychain item and keeps state in `~/.bc3`:
+
+```
+ln -s "$PWD/bc3" /usr/local/bin/bc3
+bc3
+```
 
 # Parallel Instances
 
