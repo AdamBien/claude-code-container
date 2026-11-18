@@ -1,0 +1,12 @@
+#!/bin/zsh
+token=$(security find-generic-password -s aws-bearer-token-bedrock -w) || exit 1
+container run --rm -it \
+-c 8 -m 32G \
+-v "$PWD:$PWD" -w "$PWD" \
+-v "$HOME/.bc3:/root/.claude" \
+--mount "type=bind,source=$HOME/.claude/skills,target=/root/.claude/skills,readonly" \
+-e AWS_BEARER_TOKEN_BEDROCK="$token" \
+-e CLAUDE_CODE_USE_BEDROCK=1 \
+-e AWS_REGION="eu-central-1" \
+-e ANTHROPIC_MODEL="eu.anthropic.claude-opus-5-5" \
+claude-code-container claude --dangerously-skip-permissions "$@"
